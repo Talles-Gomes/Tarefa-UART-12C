@@ -1,12 +1,10 @@
-# Matriz-de-leds
+# Introdução às Interfaces de Comunicação Serial com RP2040 UART e I2C
 
-Repositório para a tarefa sobre interrupção no Raspberry Pi Pico W, do curso de capacitação Embarcatech.
+Repositório para a tarefa sobre comunicação Serial UART e I2C no Raspberry Pi Pico W, do curso de capacitação Embarcatech
 
 ## Descrição do Projeto
 
-Este projeto demonstra o controle de interrupções através de uma matriz de LEDs utilizando o Raspberry Pi
-Pico W. Ele inclui funcionalidades para exibir um número de 0 a 9 na matriz de leds, e incrementar ou decrementar mediante interrupções oriundas de 2 push buttons. 
-sem interromper o funcionamento da função principal, que é representada pelo led vermelho que pisca continuamente.
+Este projeto demonstra o controle de comunicação entre periféricos utilizando comunicação UART E I2C simultaneamente num mesmo microcontrolador raspberry pico pi W. O programa recebe um caracter através do monitor serial do computador através da porta Usb. Então ele exibe esse caracter na tela Oled pela comunicação I2C. Além disso, se for número ele adicionalmente exibirá na matriz de leds 5x5. Pra finalizar ele pode acionar 2 leds distintos e notificar tanto na tela Oled quanto no monitor serial.
 
 ## Demonstração
 

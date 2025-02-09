@@ -31,7 +31,7 @@ void gpio_irq_handler(uint gpio,uint32_t events)
         {
             last_time = current_time;
             if(gpio == 5){
-                ssd1306_draw_string(&ssd, "LED verde alternado", 8, 10); // Desenha uma letra
+                ssd1306_draw_string(&ssd, "LED verde alternado", 8, 10); // mensagem pro Oled
                 ssd1306_send_data(&ssd); // Atualiza o display
                     gpio_put(led_G, !gpio_get(led_G));
                     if (g%2 == 0){
@@ -44,8 +44,16 @@ void gpio_irq_handler(uint gpio,uint32_t events)
             }
             if (gpio == 6)
             {
-                gpio_put(led_B, !gpio_get(led_B));
-                    printf("LED azul alternado!\n");;
+                ssd1306_draw_string(&ssd, "LED azul alternado", 8, 10); // mensagem pro Oled
+                ssd1306_send_data(&ssd); // Atualiza o display
+                    gpio_put(led_B, !gpio_get(led_B));
+                    if (g%2 == 0){
+                        printf("LED azul foi aceso\n");
+                        b++;
+                    } else {
+                        printf("LED azul foi apagado\n");
+                        b++;
+                    }
             }
         }
 
@@ -99,6 +107,7 @@ int main()
     if (stdio_usb_connected())
     {
         if (scanf("%c", &leitura) == 1){
+            if (leitura>='a')
             apagar(pio, sm);
         }
     }
