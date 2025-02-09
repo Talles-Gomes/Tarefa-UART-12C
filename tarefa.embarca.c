@@ -3,22 +3,22 @@
 #include "matriz_leds.h"
 #include "pico/bootrom.h"
 #include "hardware/timer.h"
+#include "hardware/i2c.h"
+#include "inc/ssd1306.h"
+#include "inc/font.h"
+#define I2C_PORT i2c1
+#define I2C_SDA 14
+#define I2C_SCL 15
+#define endereco 0x3C
 
-#define Tempo_led 100 
 const uint led_R = 13;
 const uint botA = 5;
 const uint botB = 6;
-int leitura = 0;
+char leitura ;
 
 static void gpio_irq_handler(uint gpio,uint32_t events);
 static volatile uint32_t last_time = 0;
-void acionar_led_vermelho() 
-{ 
-    gpio_put(led_R, 1);
-    sleep_ms(Tempo_led);
-    gpio_put(led_R, 0);
-    sleep_ms(Tempo_led);
-}
+
 void gpio_irq_handler(uint gpio,uint32_t events)
     {
         uint32_t current_time = to_us_since_boot(get_absolute_time());
@@ -55,37 +55,36 @@ int main()
     gpio_set_irq_enabled_with_callback(botB,GPIO_IRQ_EDGE_FALL,true, &gpio_irq_handler);
     while (true)
     {
-        acionar_led_vermelho();
         switch(leitura)
         {
-            case 0 :
+            case '0' :
                 num0(pio, sm); // número 0
                 break;
-            case 1 :
+            case '1' :
                 num1(pio, sm);// número 1
                 break;
-            case 2 :
+            case '2' :
                 num2(pio, sm); // número 2
                 break;
-            case 3 :
+            case '3' :
                 num3(pio, sm); // número 3
                 break;
-            case 4 :
+            case '4' :
                 num4(pio,sm); // número 4
                 break;
-            case 5 :
+            case '5' :
                 num5(pio, sm); // número 5
                 break;
-            case 6 :
+            case '6' :
                 num6(pio, sm); // número 6
                 break;
-            case 7 :
+            case '7' :
                 num7(pio, sm); // número 7
                 break;
-            case 8 :
+            case '8' :
                 num8(pio, sm); // número 8
                 break;
-            case 9 :
+            case '9' :
                 num9(pio, sm); // número 9
                 break;
 

@@ -42,13 +42,14 @@ pico_set_program_version(tarefa_embarca "0.1")
 pico_generate_pio_header(tarefa_embarca ${CMAKE_CURRENT_LIST_DIR}/pio_matrix.pio)
 
 # Habilita entrada/saída por UART/USB
-pico_enable_stdio_uart(tarefa_embarca 1)
+pico_enable_stdio_uart(tarefa_embarca 0)
 pico_enable_stdio_usb(tarefa_embarca 1)
 
 # Vincula as bibliotecas necessárias ao programa
 target_link_libraries(tarefa_embarca
     pico_stdlib
-    hardware_pio  # Biblioteca de suporte para PIO
+    hardware_pio # Biblioteca de suporte para PIO
+    hardware_i2c
 )
 
 # Inclui os diretórios padrão e adicionais no projeto
