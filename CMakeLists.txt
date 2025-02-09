@@ -32,7 +32,7 @@ project(tarefa_embarca C CXX ASM)
 pico_sdk_init()
 
 # Define o executável
-add_executable(tarefa_embarca tarefa.embarca.c matriz_leds.c)
+add_executable(tarefa_embarca tarefa.embarca.c matriz_leds.c inc/ssd1306.c)
 
 # Configurações de nome e versão do programa
 pico_set_program_name(tarefa_embarca "tarefa_embarca")
@@ -42,13 +42,14 @@ pico_set_program_version(tarefa_embarca "0.1")
 pico_generate_pio_header(tarefa_embarca ${CMAKE_CURRENT_LIST_DIR}/pio_matrix.pio)
 
 # Habilita entrada/saída por UART/USB
-pico_enable_stdio_uart(tarefa_embarca 1)
+pico_enable_stdio_uart(tarefa_embarca 0)
 pico_enable_stdio_usb(tarefa_embarca 1)
 
 # Vincula as bibliotecas necessárias ao programa
 target_link_libraries(tarefa_embarca
     pico_stdlib
-    hardware_pio  # Biblioteca de suporte para PIO
+    hardware_pio # Biblioteca de suporte para PIO
+    hardware_i2c
 )
 
 # Inclui os diretórios padrão e adicionais no projeto
