@@ -32,7 +32,7 @@ project(tarefa_embarca C CXX ASM)
 pico_sdk_init()
 
 # Define o executável
-add_executable(tarefa_embarca tarefa.embarca.c matriz_leds.c)
+add_executable(tarefa_embarca tarefa.embarca.c matriz_leds.c inc/ssd1306.c)
 
 # Configurações de nome e versão do programa
 pico_set_program_name(tarefa_embarca "tarefa_embarca")

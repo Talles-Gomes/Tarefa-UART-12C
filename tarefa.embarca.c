@@ -15,6 +15,7 @@ const uint led_R = 13;
 const uint botA = 5;
 const uint botB = 6;
 char leitura ;
+bool cor = true;
 
 static void gpio_irq_handler(uint gpio,uint32_t events);
 static volatile uint32_t last_time = 0;
@@ -37,9 +38,10 @@ void gpio_irq_handler(uint gpio,uint32_t events)
     }
 int main()
 {
+    //Função para desenhar na matriz de leds 5x5
     PIO pio = pio0;
     uint sm = configurar_matriz(pio);
-
+    // Inicialização das portas GPIO
     gpio_init(led_R);
     gpio_set_dir(led_R, GPIO_OUT);
 
@@ -50,11 +52,32 @@ int main()
     gpio_init(botB);
     gpio_set_dir(botB, GPIO_IN);
     gpio_pull_up(botB);
-
+    //Função de chamada por interrupção
     gpio_set_irq_enabled_with_callback(botA,GPIO_IRQ_EDGE_FALL,true, &gpio_irq_handler);
     gpio_set_irq_enabled_with_callback(botB,GPIO_IRQ_EDGE_FALL,true, &gpio_irq_handler);
+    // I2C Initialisation. Using it at 400Khz.
+    i2c_init(I2C_PORT, 400 * 1000);
+
+    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
+    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
+    gpio_pull_up(I2C_SDA); // Pull up the data line
+    gpio_pull_up(I2C_SCL); // Pull up the clock line
+    ssd1306_t ssd; // Inicializa a estrutura do display
+    ssd1306_init(&ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT); // Inicializa o display
+    ssd1306_config(&ssd); // Configura o display
+    ssd1306_send_data(&ssd); // Envia os dados para o display
+    // Limpa o display. O display inicia com todos os pixels apagados.
+     ssd1306_fill(&ssd, false);
+    ssd1306_send_data(&ssd);
+
     while (true)
     {
+    cor = !cor;
+    // Atualiza o conteúdo do display com animações
+    ssd1306_fill(&ssd, !cor); // Limpa o display
+    ssd1306_draw_string(&ssd, "opqrs", 8, 10); // Desenha uma string 
+    ssd1306_send_data(&ssd); // Atualiza o display
+    sleep_ms(1000);
         switch(leitura)
         {
             case '0' :
