@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "matriz_leds.h"
@@ -11,11 +12,14 @@
 #define I2C_SCL 15
 #define endereco 0x3C
 
-const uint led_R = 13;
+#define led_G 11
+#define led_B 12
 const uint botA = 5;
 const uint botB = 6;
 char leitura ;
 bool cor = true;
+int g,b = 0 ;
+ssd1306_t ssd; // Inicializa a estrutura do display
 
 static void gpio_irq_handler(uint gpio,uint32_t events);
 static volatile uint32_t last_time = 0;
@@ -26,12 +30,22 @@ void gpio_irq_handler(uint gpio,uint32_t events)
         if(current_time - last_time > 200000) // 200 ms de debouncing
         {
             last_time = current_time;
-            if(gpio == 5 && leitura < 9){
-                leitura++;
+            if(gpio == 5){
+                ssd1306_draw_string(&ssd, "LED verde alternado", 8, 10); // Desenha uma letra
+                ssd1306_send_data(&ssd); // Atualiza o display
+                    gpio_put(led_G, !gpio_get(led_G));
+                    if (g%2 == 0){
+                        printf("LED verde foi aceso\n");
+                        g++;
+                    } else {
+                        printf("LED verde foi apagado\n");
+                        g++;
+                    }
             }
-            if (gpio == 6 && leitura > 0)
+            if (gpio == 6)
             {
-                leitura--;
+                gpio_put(led_B, !gpio_get(led_B));
+                    printf("LED azul alternado!\n");;
             }
         }
 
@@ -42,8 +56,11 @@ int main()
     PIO pio = pio0;
     uint sm = configurar_matriz(pio);
     // Inicialização das portas GPIO
-    gpio_init(led_R);
-    gpio_set_dir(led_R, GPIO_OUT);
+    gpio_init(led_G);
+    gpio_set_dir(led_G, GPIO_OUT);
+
+    gpio_init(led_B);
+    gpio_set_dir(led_B, GPIO_OUT);
 
     gpio_init(botA);
     gpio_set_dir(botA, GPIO_IN);
@@ -62,22 +79,29 @@ int main()
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C); // Set the GPIO pin function to I2C
     gpio_pull_up(I2C_SDA); // Pull up the data line
     gpio_pull_up(I2C_SCL); // Pull up the clock line
-    ssd1306_t ssd; // Inicializa a estrutura do display
+  
     ssd1306_init(&ssd, WIDTH, HEIGHT, false, endereco, I2C_PORT); // Inicializa o display
     ssd1306_config(&ssd); // Configura o display
     ssd1306_send_data(&ssd); // Envia os dados para o display
     // Limpa o display. O display inicia com todos os pixels apagados.
-     ssd1306_fill(&ssd, false);
+    ssd1306_fill(&ssd, false);
     ssd1306_send_data(&ssd);
-
+    
     while (true)
     {
-    cor = !cor;
+   
     // Atualiza o conteúdo do display com animações
     ssd1306_fill(&ssd, !cor); // Limpa o display
-    ssd1306_draw_string(&ssd, "opqrs", 8, 10); // Desenha uma string 
+    ssd1306_draw_char(&ssd, leitura, 8, 10); // Desenha uma letra
     ssd1306_send_data(&ssd); // Atualiza o display
     sleep_ms(1000);
+
+    if (stdio_usb_connected())
+    {
+        if (scanf("%c", &leitura) == 1){
+            apagar(pio, sm);
+        }
+    }
         switch(leitura)
         {
             case '0' :
