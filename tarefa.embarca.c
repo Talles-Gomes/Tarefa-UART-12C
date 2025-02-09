@@ -47,7 +47,7 @@ void gpio_irq_handler(uint gpio,uint32_t events)
                 ssd1306_draw_string(&ssd, "LED azul alternado", 8, 10); // mensagem pro Oled
                 ssd1306_send_data(&ssd); // Atualiza o display
                     gpio_put(led_B, !gpio_get(led_B));
-                    if (g%2 == 0){
+                    if (b%2 == 0){
                         printf("LED azul foi aceso\n");
                         b++;
                     } else {
@@ -107,7 +107,7 @@ int main()
     if (stdio_usb_connected())
     {
         if (scanf("%c", &leitura) == 1){
-            if (leitura>='a')
+            if (leitura>='A' )
             apagar(pio, sm);
         }
     }
